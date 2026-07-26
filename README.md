@@ -1,0 +1,2 @@
+# SearchImage-Extension
+
