@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Reverse Image Search — Settings</title>
+  <link rel="stylesheet" href="options.css" />
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Reverse Image Search</h1>
+      <p class="subtitle">Choose which search engines show up when you right-click an image, and drag their order.</p>
+    </header>
+
+    <section class="card">
+      <h2>Search engines</h2>
+      <ul id="engine-list"></ul>
+    </section>
+
+    <section class="card">
+      <h2>Behavior</h2>
+      <label class="toggle-row">
+        <input type="checkbox" id="open-in-background" />
+        <span>Open results in a background tab</span>
+      </label>
+    </section>
+
+    <footer>
+      <button id="reset-defaults" class="secondary">Reset to defaults</button>
+    </footer>
+  </main>
+
+  <script src="../engines.js"></script>
+  <script src="options.js"></script>
+</body>
+</html>
