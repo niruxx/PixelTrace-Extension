@@ -24,7 +24,7 @@ async function rebuildMenus() {
   if (activeEngines.length === 0) {
     browser.contextMenus.create({
       id: NONE_ID,
-      title: "Reverse Image Search (no engines enabled — click to configure)",
+      title: "PixelTrace (no engines enabled — click to configure)",
       contexts: ["image"]
     });
     return;
@@ -32,7 +32,7 @@ async function rebuildMenus() {
 
   browser.contextMenus.create({
     id: PARENT_ID,
-    title: "Reverse Image Search",
+    title: "PixelTrace",
     icons: { 16: "icons/icon-16.png", 32: "icons/icon-32.png" },
     contexts: ["image"]
   });
@@ -62,7 +62,7 @@ function notifyUnsupportedImage() {
   browser.notifications.create({
     type: "basic",
     iconUrl: browser.runtime.getURL("icons/icon-128.png"),
-    title: "Reverse Image Search",
+    title: "PixelTrace",
     message:
       "This image can't be reverse-searched directly (it's an embedded or data image). Save the image and upload it to the search engine manually instead."
   });

@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Reverse Image Search",
+  "name": "PixelTrace",
   "version": "1.0.0",
   "description": "Right-click any image to reverse image search it on Google, Bing, Yandex, TinEye, and more.",
   "icons": {
@@ -18,7 +18,7 @@
       "16": "icons/icon-16.png",
       "32": "icons/icon-32.png"
     },
-    "default_title": "Reverse Image Search settings"
+    "default_title": "PixelTrace settings"
   },
   "options_ui": {
     "page": "options/options.html",
@@ -26,7 +26,7 @@
   },
   "browser_specific_settings": {
     "gecko": {
-      "id": "reverse-image-search@searchimage.extension",
+      "id": "pixeltrace@searchimage.extension",
       "strict_min_version": "140.0",
       "data_collection_permissions": {
         "required": ["none"]

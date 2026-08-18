@@ -1,8 +1,8 @@
 <div align="center">
 
-<img src="icons/icon-128.png" width="96" height="96" alt="Reverse Image Search icon" />
+<img src="icons/icon-128.png" width="96" height="96" alt="PixelTrace icon" />
 
-# 🔍 Reverse Image Search
+# 🔍 PixelTrace
 
 **Right-click any image → search it on Google Lens, Bing, Yandex, TinEye, Baidu, Sogou, Lenso.ai, or Shutterstock.**
 
@@ -35,7 +35,7 @@ If you don't trust it either — good instinct. Read the source (it's short), th
 
 ## ✨ Features
 
-- 🖱️ Adds a **Reverse Image Search** submenu to the image right-click menu, with a branded icon per engine.
+- 🖱️ Adds a **PixelTrace** submenu to the image right-click menu, with a branded icon per engine.
 - 🔁 **"Search on all enabled engines"** shortcut to fan out to every engine you've turned on at once.
 - ⚙️ Settings page to enable/disable engines, reorder them, and choose whether results open in a background tab.
 - 🧠 Uses each engine's public *search-by-URL* endpoint directly — no fetching or re-uploading of image data through the extension itself.
