@@ -1,3 +1,13 @@
+// MV3 service workers can't load multiple background scripts via the manifest
+// (Chrome only accepts a single "service_worker" entry), so pull engines.js in manually.
+importScripts("engines.js");
+
+// Chrome doesn't expose a `browser` global; alias it to `chrome`, whose extension
+// APIs have supported promises (in place of callbacks) since Chrome 99.
+if (typeof browser === "undefined") {
+  var browser = chrome;
+}
+
 const PARENT_ID = "ris-parent";
 const NONE_ID = "ris-none";
 const ALL_ID = "ris-all";
@@ -24,16 +34,18 @@ async function rebuildMenus() {
   if (activeEngines.length === 0) {
     browser.contextMenus.create({
       id: NONE_ID,
-      title: "PixelTrace (no engines enabled — click to configure)",
+      title: "PixelSearch (no engines enabled — click to configure)",
       contexts: ["image"]
     });
     return;
   }
 
+  // Chrome's contextMenus.create doesn't reliably accept a per-item `icons` property
+  // across versions, so menu items go icon-less here (engine icons still show on the
+  // options page, which renders them as plain <img> tags).
   browser.contextMenus.create({
     id: PARENT_ID,
-    title: "PixelTrace",
-    icons: { 16: "icons/icon-16.png", 32: "icons/icon-32.png" },
+    title: "PixelSearch",
     contexts: ["image"]
   });
 
@@ -42,7 +54,6 @@ async function rebuildMenus() {
       id: `ris-engine-${engine.id}`,
       parentId: PARENT_ID,
       title: engine.manualUpload ? `${engine.name} (paste URL there)` : engine.name,
-      icons: engine.icon,
       contexts: ["image"]
     });
   }
@@ -62,7 +73,7 @@ function notifyUnsupportedImage() {
   browser.notifications.create({
     type: "basic",
     iconUrl: browser.runtime.getURL("icons/icon-128.png"),
-    title: "PixelTrace",
+    title: "PixelSearch",
     message:
       "This image can't be reverse-searched directly (it's an embedded or data image). Save the image and upload it to the search engine manually instead."
   });

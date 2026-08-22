@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="icons/icon-128.png" width="96" height="96" alt="PixelTrace icon" />
+<img src="firefox_extension/icons/icon-128.png" width="96" height="96" alt="PixelSearch icon" />
 
 # 🔍 PixelSearch
 
@@ -10,6 +10,7 @@ No uploads. No accounts. No page reload. **Zero host permissions.**
 
 ![Manifest V3](https://img.shields.io/badge/manifest-v3-4c6ef5?style=flat-square)
 ![Firefox](https://img.shields.io/badge/firefox-140%2B-ff9500?style=flat-square)
+![Chrome](https://img.shields.io/badge/chrome-99%2B-4285f4?style=flat-square)
 ![Host permissions](https://img.shields.io/badge/host%20permissions-zero-2ea043?style=flat-square)
 ![Tracking](https://img.shields.io/badge/analytics%20%2F%20tracking-none-2ea043?style=flat-square)
 
@@ -35,7 +36,7 @@ If you don't trust it either — good instinct. Read the source (it's short), th
 
 ## ✨ Features
 
-- 🖱️ Adds a **PixelTrace** submenu to the image right-click menu, with a branded icon per engine.
+- 🖱️ Adds a **PixelSearch** submenu to the image right-click menu (with a branded icon per engine in Firefox).
 - 🔁 **"Search on all enabled engines"** shortcut to fan out to every engine you've turned on at once.
 - ⚙️ Settings page to enable/disable engines, reorder them, and choose whether results open in a background tab.
 - 🧠 Uses each engine's public *search-by-URL* endpoint directly — no fetching or re-uploading of image data through the extension itself.
@@ -56,22 +57,41 @@ If you don't trust it either — good instinct. Read the source (it's short), th
 
 ---
 
+## 🌐 Two builds, one codebase
+
+Firefox and Chrome disagree on a few Manifest V3 basics — how a background script loads (`scripts` array vs. a single `service_worker`), whether a `browser` global exists, and how strict `contextMenus.create()` is about extra fields. Rather than paper over that with a bundler, this repo ships two small, independent, fully self-contained extension folders:
+
+```
+firefox_extension/    Loadable as-is in Firefox — background runs as a scripts-array event page,
+                       uses the native `browser.*` API, and keeps per-item context-menu icons.
+chromium_extension/   Loadable as-is in Chrome/Edge/Brave/etc. — background is a single
+                       service_worker (loads engines.js via importScripts), polyfills
+                       `browser` to `chrome`, and drops context-menu icons (Chrome's
+                       contextMenus.create() rejects the `icons` field on many versions).
+```
+
+Each folder has its own `manifest.json`, `background.js`, `engines.js`, `options/`, and `icons/` — there's no shared build step, so what you load in the browser is exactly the source you're reading.
+
+---
+
 ## 📦 Install
 
-### Option A — Temporary install (fastest, for trying it out)
+### Firefox
+
+**Temporary install (fastest, for trying it out):**
 
 1. Open `about:debugging#/runtime/this-firefox` in Firefox.
 2. Click **Load Temporary Add-on…**.
-3. Select `manifest.json` from this folder.
+3. Select `firefox_extension/manifest.json`.
 4. Right-click any image on a webpage to see the new menu. 🎉
 
 > ⚠️ Temporary add-ons are removed when Firefox restarts — use this for testing, not daily use.
 
-### Option B — Build it yourself
-
-You just need [Node.js](https://nodejs.org/) (for `npx`); there's no build step or bundler — the source *is* the shipped code.
+**Build it yourself:**
 
 ```bash
+cd firefox_extension
+
 # 1. Validate the extension (manifest + source checks)
 npx web-ext lint
 
@@ -82,26 +102,36 @@ npx web-ext run
 npx web-ext build
 ```
 
-`web-ext build` drops a versioned `.zip` in `web-ext-artifacts/` — that's your compiled extension, byte-for-byte the source you just read.
+`web-ext build` drops a versioned `.zip` in `firefox_extension/web-ext-artifacts/`.
 
-### Permanent installation
-
-Firefox only runs *signed* extensions outside of temporary installs. To install permanently:
+**Permanent installation:** Firefox only runs *signed* extensions outside of temporary installs.
 
 - **Self-distribute:** submit the `.zip` from `web-ext build` to [AMO's "Submit a New Add-on"](https://addons.mozilla.org/developers/) for signing (you can list it unlisted/private), then install the signed `.xpi` it hands back.
 - **Nightly / Developer Edition / ESR:** set `xpinstall.signatures.required` to `false` in `about:config` and load the unsigned build directly.
+
+### Chrome (and Chromium-based browsers: Edge, Brave, etc.)
+
+1. Open `chrome://extensions`.
+2. Enable **Developer mode** (top right).
+3. Click **Load unpacked** and select the `chromium_extension/` folder.
+4. Right-click any image on a webpage to see the new menu. 🎉
+
+To package a `.zip` for the Chrome Web Store, use **Pack extension** in `chrome://extensions`, pointing at `chromium_extension/`, or `zip -r pixelsearch-chromium.zip .` from inside that folder.
 
 ---
 
 ## 📁 Project layout
 
 ```
-manifest.json     MV3 manifest (Firefox 140+)
-engines.js        Shared engine list + default settings (background & options both load this)
-background.js     Builds the context menu from settings, opens result tabs on click
-options/          Settings UI — enable/reorder engines, background-tab toggle
-icons/            Extension icon, 16/32/48/128px
-icons/engines/    Per-engine badge icons (16/32px) used in the menu and settings page
+firefox_extension/    Firefox MV3 build (background scripts array, browser.* API, menu icons)
+chromium_extension/   Chrome/Chromium MV3 build (service_worker background, chrome.* API)
+
+Each build folder contains:
+  manifest.json        Browser-specific MV3 manifest
+  engines.js            Shared engine list + default settings (background & options both load this)
+  background.js         Builds the context menu from settings, opens result tabs on click
+  options/               Settings UI — enable/reorder engines, background-tab toggle
+  icons/                  Extension icon (16/32/48/128px) and per-engine badge icons (16/32px)
 ```
 
 ## 🔐 Permissions, explained
@@ -112,4 +142,4 @@ icons/engines/    Per-engine badge icons (16/32px) used in the menu and settings
 | `storage` | To remember which engines you've enabled and their order. |
 | `notifications` | To tell you when an image can't be reverse-searched by URL. |
 
-No `<all_urls>`, no `activeTab`, no `tabs` content access, no host permissions of any kind.
+No `<all_urls>`, no `activeTab`, no `tabs` content access, no host permissions of any kind — in either build.
