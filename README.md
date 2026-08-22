@@ -2,7 +2,7 @@
 
 <img src="icons/icon-128.png" width="96" height="96" alt="PixelTrace icon" />
 
-# 🔍 PixelTrace
+# 🔍 PixelSearch
 
 **Right-click any image → search it on Google Lens, Bing, Yandex, TinEye, Baidu, Sogou, Lenso.ai, or Shutterstock.**
 
